@@ -48,7 +48,7 @@ func main() {
 
 func arg(loc string) matt.PDBArg {
 	return matt.PDBArg{
-		Path: fmt.Sprintf("../../../../data/samples/%s",loc),
+		Path: fmt.Sprintf("../../../../data/samples/%s", loc),
 	}
 }
 

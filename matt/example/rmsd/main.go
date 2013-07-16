@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/BurntSushi/bcbgo/apps/matt"
+	"github.com/TuftsBCB/apps/matt"
 )
 
 func main() {

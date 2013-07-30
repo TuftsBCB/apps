@@ -56,6 +56,8 @@ func NewChainArg(chain *pdb.Chain) PDBArg {
 var DefaultConfig = Config{
 	Binary:       "matt",
 	OutputPrefix: "",
+	Bent:         false,
+	RawNumbers:   false,
 	Verbose:      true,
 	Vomit:        false,
 }
@@ -72,6 +74,16 @@ type Config struct {
 	// the OutputPrefix will be set to a temporary directory in your system's
 	// TempDir.
 	OutputPrefix string
+
+	// Bent sets the "-b" flag so that Matt outputs "bent" versions of each
+	// regular file.
+	Bent bool
+
+	// RawNumbers sets the "-r0" flag so that Matt does not renumber all of
+	// the residue numbers in the output PDB file.
+	// This is useful when you need to determine contiguous alignment
+	// regions.
+	RawNumbers bool
 
 	// Verbose controls whether all commands executed are printed to stderr.
 	Verbose bool
@@ -280,11 +292,16 @@ func (res Results) CleanDir() {
 
 // Clean will delete all files produced by matt.
 // Namely, 'prefix.{fasta,pdb,spt,txt}'. Errors, if they occur, are suppressed.
+// The corresponding bent files are also removed.
 func (res Results) Clean() {
 	os.Remove(res.Fasta())
 	os.Remove(res.Pdb())
 	os.Remove(res.Spt())
 	os.Remove(res.Txt())
+	os.Remove(res.FastaBent())
+	os.Remove(res.PdbBent())
+	os.Remove(res.SptBent())
+	os.Remove(res.TxtBent())
 }
 
 // Fasta returns the fasta output file path.
@@ -305,4 +322,28 @@ func (res Results) Spt() string {
 // Txt returns the txt output file path.
 func (res Results) Txt() string {
 	return res.prefix + ".txt"
+}
+
+// FastaBent returns the bent fasta output file path.
+// This file will only exist if "Bent" is set to true in the Matt configuration.
+func (res Results) FastaBent() string {
+	return res.prefix + "_bent.fasta"
+}
+
+// PdbBent returns the bent PDB output file path.
+// This file will only exist if "Bent" is set to true in the Matt configuration.
+func (res Results) PdbBent() string {
+	return res.prefix + "_bent.pdb"
+}
+
+// SptBent returns the bent Spt output file path.
+// This file will only exist if "Bent" is set to true in the Matt configuration.
+func (res Results) SptBent() string {
+	return res.prefix + "_bent.spt"
+}
+
+// TxtBent returns the bent txt output file path.
+// This file will only exist if "Bent" is set to true in the Matt configuration.
+func (res Results) TxtBent() string {
+	return res.prefix + "_bent.txt"
 }

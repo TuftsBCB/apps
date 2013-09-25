@@ -43,6 +43,14 @@ func onStderr(r io.Reader) string {
 	return string(all)
 }
 
+// BlastResults is the top-level struct for representing XML output of the
+// BLAST family of programs. Subsequent XML elements are represented with
+// other `Blast*` types.
+//
+// The types are meant to be comprehensive with respect to NCBI's DTD found
+// here: http://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.dtd.
+// Note that the meat is really here:
+// http://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.mod.dtd.
 type BlastResults struct {
 	XMLName    xml.Name         `xml:"BlastOutput"`
 	Program    string           `xml:"BlastOutput_program"`

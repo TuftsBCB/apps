@@ -39,6 +39,10 @@ type Blastp struct {
 // with default parameters specified in the output of `blastp -help`.
 // Parameters can be overridden using the `SetFlag` method.
 //
+// Note that `queries` may have length 0. If it does, then the obligation is
+// on the caller to set the `-query` flag (or provide some other means of
+// giving BLAST a search query).
+//
 // This also sets the `-num_threads` flag to the number of logical CPUs
 // on your machine.
 func NewBlastp(queries []seq.Sequence, database string) *Blastp {
@@ -80,6 +84,10 @@ type Blastn struct {
 // NewBlastn is a convenience function for constructing a blastn search
 // with default parameters specified in the output of `blastn -help`.
 // Parameters can be overridden using the `SetFlag` method.
+//
+// Note that `queries` may have length 0. If it does, then the obligation is
+// on the caller to set the `-query` flag (or provide some other means of
+// giving BLAST a search query).
 //
 // This also sets the `-num_threads` flag to the number of logical CPUs
 // on your machine.
@@ -139,6 +147,10 @@ func (fs flags) CmdArgs() []string {
 }
 
 func queryReader(queries []seq.Sequence) io.Reader {
+	if len(queries) == 0 {
+		return nil
+	}
+
 	buf := new(bytes.Buffer)
 	w := fasta.NewWriter(buf)
 	if err := w.WriteAll(queries); err != nil {

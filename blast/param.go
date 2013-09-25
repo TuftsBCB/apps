@@ -28,15 +28,17 @@ type Blaster interface {
 	Stdin() io.Reader
 }
 
-// Blastp is a blaster for protein sequence search.
-type Blastp struct {
+// Query is a generic blaster for any type of BLAST search. It provides a
+// thin wrapper around setting command line flags to pass to a BLAST
+// executable.
+type Query struct {
+	// The BLAST executable to use.
 	Exec    string
 	queries []seq.Sequence
 	flags
 }
 
-// NewBlastp is a convenience function for constructing a blastp search
-// with default parameters specified in the output of `blastp -help`.
+// NewQuery constructs a generic blast search with default parameters.
 // Parameters can be overridden using the `SetFlag` method.
 //
 // Note that `queries` may have length 0. If it does, then the obligation is
@@ -45,15 +47,25 @@ type Blastp struct {
 //
 // This also sets the `-num_threads` flag to the number of logical CPUs
 // on your machine.
-func NewBlastp(queries []seq.Sequence, database string) *Blastp {
-	b := &Blastp{
-		Exec:    "blastp",
+func NewQuery(exec string, queries []seq.Sequence, database string) *Query {
+	b := &Query{
+		Exec:    exec,
 		queries: queries,
 		flags:   make(flags, 0),
 	}
 	b.SetFlag("db", database)
 	b.SetFlag("num_threads", runtime.NumCPU())
 	return b
+}
+
+// NewBlastp calls NewQuery with "blastp" as the executable.
+func NewBlastp(queries []seq.Sequence, database string) *Query {
+	return NewQuery("blastp", queries, database)
+}
+
+// NewBlastn calls NewQuery with "blastn" as the executable.
+func NewBlastn(queries []seq.Sequence, database string) *Query {
+	return NewQuery("blastn", queries, database)
 }
 
 // SetFlag adds a command line switch (without the proceeding "-") to the
@@ -62,61 +74,15 @@ func NewBlastp(queries []seq.Sequence, database string) *Blastp {
 // in a valid command line flag value.
 //
 // If `value` is `false`, then the flag is removed from the blastp arguments.
-func (b *Blastp) SetFlag(name string, value interface{}) {
+func (b *Query) SetFlag(name string, value interface{}) {
 	b.flags.set(name, value)
 }
 
-func (b *Blastp) Executable() string {
+func (b *Query) Executable() string {
 	return b.Exec
 }
 
-func (b *Blastp) Stdin() io.Reader {
-	return queryReader(b.queries)
-}
-
-// Blastn is a blaster for nucleotide sequence search.
-type Blastn struct {
-	Exec    string
-	queries []seq.Sequence
-	flags
-}
-
-// NewBlastn is a convenience function for constructing a blastn search
-// with default parameters specified in the output of `blastn -help`.
-// Parameters can be overridden using the `SetFlag` method.
-//
-// Note that `queries` may have length 0. If it does, then the obligation is
-// on the caller to set the `-query` flag (or provide some other means of
-// giving BLAST a search query).
-//
-// This also sets the `-num_threads` flag to the number of logical CPUs
-// on your machine.
-func NewBlastn(queries []seq.Sequence, database string) *Blastn {
-	b := &Blastn{
-		Exec:    "blastn",
-		queries: queries,
-		flags:   make(flags, 0),
-	}
-	b.SetFlag("db", database)
-	b.SetFlag("num_threads", runtime.NumCPU())
-	return b
-}
-
-// SetFlag adds a command line switch (without the proceeding "-") to the
-// set of blastn arguments. `value` should be a string, integer, float, bool
-// or other type with an appropriate `Stringer` implementation that results
-// in a valid command line flag value.
-//
-// If `value` is `false`, then the flag is removed from the blastn arguments.
-func (b *Blastn) SetFlag(name string, value interface{}) {
-	b.flags.set(name, value)
-}
-
-func (b *Blastn) Executable() string {
-	return b.Exec
-}
-
-func (b *Blastn) Stdin() io.Reader {
+func (b *Query) Stdin() io.Reader {
 	return queryReader(b.queries)
 }
 

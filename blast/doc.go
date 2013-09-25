@@ -4,7 +4,10 @@ BLAST suite of programs. Namely, this package defines an interface `Blaster`
 whereby values of types that implement it can execute a BLAST search using
 the `Blast` function in this package.
 
-Finally, the results of a BLAST search are captured as XML data and loaded
-into the `BlastResults` structure automatically.
+The results of a BLAST search are captured as XML data and loaded into the
+`BlastResults` structure automatically.
+
+Note that this is not a package for executing remote BLAST queries on NCBI's
+web page, but rather, running local programs like "blastp" on a local database.
 */
 package blast

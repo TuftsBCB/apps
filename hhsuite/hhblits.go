@@ -8,8 +8,8 @@ import (
 
 	"github.com/BurntSushi/cmd"
 
-	"github.com/TuftsBCB/io/hhm"
 	"github.com/TuftsBCB/io/hhr"
+	"github.com/TuftsBCB/io/hmm"
 )
 
 type HHBlitsConfig struct {
@@ -84,7 +84,7 @@ func (conf HHBlitsConfig) Run(db Database, query string) (*hhr.HHR, error) {
 // which is the output of hhblits and the input to hhmake. Thus, BuildHHM will
 // panic if the hhblits configuration contains a non-empty A3M output file name.
 func BuildHHM(hhblits HHBlitsConfig, hhmake HHMakeConfig,
-	db Database, query string) (*hhm.HHM, error) {
+	db Database, query string) (*hmm.HHM, error) {
 
 	if len(hhblits.OutA3M) > 0 {
 		panic("hhblits configuration for BuildHHM should have empty OutA3M.")

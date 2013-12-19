@@ -8,7 +8,7 @@ import (
 
 	"github.com/BurntSushi/cmd"
 
-	"github.com/TuftsBCB/io/hhm"
+	"github.com/TuftsBCB/io/hmm"
 )
 
 type HHMakeConfig struct {
@@ -49,7 +49,7 @@ var HHMakePseudo = HHMakeConfig{
 //
 // If you need to build an HHM from a single sequence, use the convenience
 // function BuildHHM.
-func (conf HHMakeConfig) Run(query string) (*hhm.HHM, error) {
+func (conf HHMakeConfig) Run(query string) (*hmm.HHM, error) {
 	hhmFile, err := ioutil.TempFile("", "bad-bcbgo-hhm")
 	if err != nil {
 		return nil, err
@@ -80,5 +80,5 @@ func (conf HHMakeConfig) Run(query string) (*hhm.HHM, error) {
 	if err := c.Run(); err != nil {
 		return nil, err
 	}
-	return hhm.Read(hhmFile)
+	return hmm.ReadHHM(hhmFile)
 }
